@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>초중등 필수 영어 동사 과거형 사전</title>
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px 16px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 500px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+      margin-top: 10px;
+    }
+
+    header h1 {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 6px;
+    }
+
+    header p {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .search-box {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 16px 20px;
+      font-size: 18px;
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      outline: none;
+      background-color: var(--card-bg);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      transition: all 0.2s ease;
+    }
+
+    .search-box input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
+    }
+
+    .result-card {
+      background-color: var(--card-bg);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+      border: 1px solid var(--border);
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .word-present {
+      font-size: 20px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .word-meaning {
+      font-size: 16px;
+      color: #059669;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    .divider {
+      height: 1px;
+      background-color: var(--border);
+      margin: 16px 0;
+    }
+
+    .past-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .past-item {
+      background-color: #f1f5f9;
+      padding: 12px;
+      border-radius: 10px;
+    }
+
+    .past-item .label {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .past-item .value {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 20px;
+      margin-bottom: 12px;
+    }
+
+    .badge-irregular {
+      background-color: #fef3c7;
+      color: #d97706;
+    }
+
+    .badge-regular {
+      background-color: #e0e7ff;
+      color: #4338ca;
+    }
+
+    .quick-list {
+      background-color: var(--card-bg);
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px solid var(--border);
+    }
+
+    .quick-list h2 {
+      font-size: 16px;
+      color: var(--text-main);
+      margin-bottom: 12px;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag {
+      background-color: #f1f5f9;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-size: 14px;
+      color: var(--text-main);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tag:hover {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .empty-state {
+      color: var(--text-muted);
+      padding: 20px 0;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>📘 스마트 과거형 사전</h1>
+    <p>동사 현재형을 입력하면 과거형과 뜻을 알려줍니다</p>
+  </header>
+
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="영단어 입력 (예: go, study, run)" oninput="searchWord()" autofocus>
+  </div>
+
+  <div class="result-card" id="resultCard">
+    <div class="empty-state">단어를 입력하거나 아래 추천 단어를 눌러보세요.</div>
+  </div>
+
+  <div class="quick-list">
+    <h2>🔥 자주 찾는 불규칙 동사</h2>
+    <div class="tags">
+      <button class="tag" onclick="quickSearch('go')">go</button>
+      <button class="tag" onclick="quickSearch('see')">see</button>
+      <button class="tag" onclick="quickSearch('eat')">eat</button>
+      <button class="tag" onclick="quickSearch('take')">take</button>
+      <button class="tag" onclick="quickSearch('write')">write</button>
+      <button class="tag" onclick="quickSearch('have')">have</button>
+      <button class="tag" onclick="quickSearch('make')">make</button>
+      <button class="tag" onclick="quickSearch('buy')">buy</button>
+      <button class="tag" onclick="quickSearch('come')">come</button>
+      <button class="tag" onclick="quickSearch('think')">think</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // 불규칙 동사 사전 데이터베이스 (현재형 : [과거형, 과거완료형, 한글 뜻])
+  const dict = {
+    "be": ["was / were", "been", "~이다, 있다"],
+    "is": ["was", "been", "~이다, 있다"],
+    "am": ["was", "been", "~이다, 있다"],
+    "are": ["were", "been", "~이다, 있다"],
+    "go": ["went", "gone", "가다"],
+    "come": ["came", "come", "오다"],
+    "run": ["ran", "run", "달리다"],
+    "see": ["saw", "seen", "보다"],
+    "eat": ["ate", "eaten", "먹다"],
+    "drink": ["drank", "drunk", "마시다"],
+    "take": ["took", "taken", "가지고 가다, 타다"],
+    "make": ["made", "made", "만들다"],
+    "have": ["had", "had", "가지고 있다, 먹다"],
+    "do": ["did", "done", "하다"],
+    "say": ["said", "said", "말하다"],
+    "get": ["got", "gotten", "얻다, 받다"],
+    "write": ["wrote", "written", "쓰다"],
+    "read": ["read", "read", "읽다"],
+    "speak": ["spoke", "spoken", "말하다"],
+    "buy": ["bought", "bought", "살다"],
+    "find": ["found", "found", "찾다"],
+    "think": ["thought", "thought", "생각하다"],
+    "know": ["knew", "known", "알다"],
+    "give": ["gave", "given", "주다"],
+    "sing": ["sang", "sung", "노래하다"],
+    "swim": ["swam", "swum", "수영하다"],
+    "fly": ["flew", "flown", "날다"],
+    "sleep": ["slept", "slept", "자다"],
+    "feel": ["felt", "felt", "느끼다"],
+    "meet": ["met", "met", "만나다"],
+    "leave": ["left", "left", "떠나다, 남기다"],
+    "bring": ["brought", "brought", "가져오다"],
+    "teach": ["taught", "taught", "가르치다"],
+    "catch": ["caught", "caught", "잡다"],
+    "hear": ["heard", "heard", "듣다"],
+    "stand": ["stood", "stood", "서다"],
+    "sit": ["sat", "sat", "앉다"]
+  };
+
+  // 규칙 변화 자동 처리 알고리즘
+  function getRegularPast(verb) {
+    if (verb.endsWith('e')) {
+      return { past: verb + 'd', pp: verb + 'd' };
+    } 
+    else if (verb.length > 2 && verb.endsWith('y') && !'aeiou'.includes(verb[verb.length - 2])) {
+      const stem = verb.slice(0, -1);
+      return { past: stem + 'ied', pp: stem + 'ied' };
+    } 
+    else if (
+      verb.length >= 3 &&
+      !'aeiou'.includes(verb[verb.length - 1]) &&
+      'aeiou'.includes(verb[verb.length - 2]) &&
+      !'aeiou'.includes(verb[verb.length - 3]) &&
+      !['w', 'x', 'y'].includes(verb[verb.length - 1])
+    ) {
+      const doubled = verb + verb[verb.length - 1] + 'ed';
+      return { past: doubled, pp: doubled };
+    } 
+    else {
+      return { past: verb + 'ed', pp: verb + 'ed' };
+    }
+  }
+
+  function searchWord() {
+    const input = document.getElementById('searchInput').value.toLowerCase().trim();
+    const card = document.getElementById('resultCard');
+
+    if (!input) {
+      card.innerHTML = `<div class="empty-state">단어를 입력하거나 아래 추천 단어를 눌러보세요.</div>`;
+      return;
+    }
+
+    let past, pp, meaning, isIrregular = false;
+
+    if (dict[input]) {
+      [past, pp, meaning] = dict[input];
+      isIrregular = true;
+    } else {
+      const regResult = getRegularPast(input);
+      past = regResult.past;
+      pp = regResult.pp;
+      meaning = "규칙 동사 변환 적용됨";
+    }
+
+    const badgeHTML = isIrregular 
+      ? `<span class="badge badge-irregular">불규칙 변환</span>` 
+      : `<span class="badge badge-regular">규칙 변환 (-ed)</span>`;
+
+    card.innerHTML = `
+      ${badgeHTML}
+      <div class="word-present">${input}</div>
+      <div class="word-meaning">${meaning}</div>
+      <div class="divider"></div>
+      <div class="past-grid">
+        <div class="past-item">
+          <div class="label">과거형 (Past)</div>
+          <div class="value">${past}</div>
+        </div>
+        <div class="past-item">
+          <div class="label">과거완료 (P.P)</div>
+          <div class="value">${pp}</div>
+        </div>
+      </div>
+    `;
+  }
+
+  function quickSearch(word) {
+    document.getElementById('searchInput').value = word;
+    searchWord();
+  }
+</script>
+
+</body>
+</html>
