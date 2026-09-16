@@ -106,27 +106,21 @@
       margin: 16px 0;
     }
 
-    .past-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .past-item {
+    .past-box {
       background-color: #f1f5f9;
-      padding: 12px;
-      border-radius: 10px;
+      padding: 18px;
+      border-radius: 12px;
     }
 
-    .past-item .label {
-      font-size: 12px;
+    .past-box .label {
+      font-size: 13px;
       color: var(--text-muted);
-      margin-bottom: 4px;
+      margin-bottom: 6px;
     }
 
-    .past-item .value {
-      font-size: 22px;
-      font-weight: 700;
+    .past-box .value {
+      font-size: 28px;
+      font-weight: 800;
       color: var(--primary);
     }
 
@@ -199,7 +193,7 @@
   </header>
 
   <div class="search-box">
-    <input type="text" id="searchInput" placeholder="영단어 입력 (예: tell, go, study)" oninput="searchWord()" autofocus>
+    <input type="text" id="searchInput" placeholder="영단어 입력 (예: ride, visit, tell)" oninput="searchWord()" autofocus>
   </div>
 
   <div class="result-card" id="resultCard">
@@ -207,8 +201,10 @@
   </div>
 
   <div class="quick-list">
-    <h2>🔥 자주 찾는 불규칙 동사</h2>
+    <h2>🔥 자주 찾는 동사</h2>
     <div class="tags">
+      <button class="tag" onclick="quickSearch('ride')">ride</button>
+      <button class="tag" onclick="quickSearch('visit')">visit</button>
       <button class="tag" onclick="quickSearch('tell')">tell</button>
       <button class="tag" onclick="quickSearch('go')">go</button>
       <button class="tag" onclick="quickSearch('see')">see</button>
@@ -217,84 +213,88 @@
       <button class="tag" onclick="quickSearch('write')">write</button>
       <button class="tag" onclick="quickSearch('have')">have</button>
       <button class="tag" onclick="quickSearch('make')">make</button>
-      <button class="tag" onclick="quickSearch('buy')">buy</button>
-      <button class="tag" onclick="quickSearch('think')">think</button>
     </div>
   </div>
 </div>
 
 <script>
-  // 불규칙 동사 사전 데이터베이스 (현재형 : [과거형, 과거완료형, 한글 뜻])
+  // 불규칙 동사 및 예외 단어 데이터베이스 (현재형 : [과거형, 한글 뜻])
   const dict = {
-    // 필수 추가 및 수정 항목
-    "tell": ["told", "told", "말하다, 이야기하다"],
-    "sell": ["sold", "sold", "팔다"],
+    // 요청 및 수정된 주요 단어
+    "ride": ["rode", "타다"],
+    "visit": ["visited", "방문하다"],
+    "tell": ["told", "말하다, 이야기하다"],
+    "sell": ["sold", "팔다"],
     
     // be 동사
-    "be": ["was / were", "been", "~이다, 있다"],
-    "is": ["was", "been", "~이다, 있다"],
-    "am": ["was", "been", "~이다, 있다"],
-    "are": ["were", "been", "~이다, 있다"],
+    "be": ["was / were", "~이다, 있다"],
+    "is": ["was", "~이다, 있다"],
+    "am": ["was", "~이다, 있다"],
+    "are": ["were", "~이다, 있다"],
     
-    // 주요 불규칙 동사 대량 보강
-    "go": ["went", "gone", "가다"],
-    "come": ["came", "come", "오다"],
-    "run": ["ran", "run", "달리다"],
-    "see": ["saw", "seen", "보다"],
-    "eat": ["ate", "eaten", "먹다"],
-    "drink": ["drank", "drunk", "마시다"],
-    "take": ["took", "taken", "가지고 가다, 타다"],
-    "make": ["made", "made", "만들다"],
-    "have": ["had", "had", "가지고 있다, 먹다"],
-    "do": ["did", "done", "하다"],
-    "say": ["said", "said", "말하다"],
-    "get": ["got", "gotten", "얻다, 받다"],
-    "write": ["wrote", "written", "쓰다"],
-    "read": ["read", "read", "읽다"],
-    "speak": ["spoke", "spoken", "말하다"],
-    "buy": ["bought", "bought", "살다"],
-    "find": ["found", "found", "찾다"],
-    "think": ["thought", "thought", "생각하다"],
-    "know": ["knew", "known", "알다"],
-    "give": ["gave", "given", "주다"],
-    "sing": ["sang", "sung", "노래하다"],
-    "swim": ["swam", "swum", "수영하다"],
-    "fly": ["flew", "flown", "날다"],
-    "sleep": ["slept", "slept", "자다"],
-    "feel": ["felt", "felt", "느끼다"],
-    "meet": ["met", "met", "만나다"],
-    "leave": ["left", "left", "떠나다, 남기다"],
-    "bring": ["brought", "brought", "가져오다"],
-    "teach": ["taught", "taught", "가르치다"],
-    "catch": ["caught", "caught", "잡다"],
-    "hear": ["heard", "heard", "듣다"],
-    "stand": ["stood", "stood", "서다"],
-    "sit": ["sat", "sat", "앉다"],
-    "pay": ["paid", "paid", "지불하다"],
-    "draw": ["drew", "drawn", "그리다"],
-    "grow": ["grew", "grown", "자라다"],
-    "wear": ["wore", "worn", "입다"],
-    "win": ["won", "won", "이기다"],
-    "lose": ["lost", "lost", "잃다, 지다"],
-    "keep": ["kept", "kept", "유지하다"],
-    "begin": ["began", "begun", "시작하다"],
-    "fall": ["fell", "fallen", "떨어지다"],
-    "break": ["broke", "broken", "부수다"],
-    "cut": ["cut", "cut", "자르다"],
-    "put": ["put", "put", "놓다"],
-    "hurt": ["hurt", "hurt", "다치게 하다"],
-    "hit": ["hit", "hit", "치다"]
+    // 주요 필수 동사 보강
+    "go": ["went", "가다"],
+    "come": ["came", "오다"],
+    "run": ["ran", "달리다"],
+    "see": ["saw", "보다"],
+    "eat": ["ate", "먹다"],
+    "drink": ["drank", "마시다"],
+    "take": ["took", "가지고 가다, 타다"],
+    "make": ["made", "만들다"],
+    "have": ["had", "가지고 있다, 먹다"],
+    "do": ["did", "하다"],
+    "say": ["said", "말하다"],
+    "get": ["got", "얻다, 받다"],
+    "write": ["wrote", "쓰다"],
+    "read": ["read", "읽다"],
+    "speak": ["spoke", "말하다"],
+    "buy": ["bought", "살다"],
+    "find": ["found", "찾다"],
+    "think": ["thought", "생각하다"],
+    "know": ["knew", "알다"],
+    "give": ["gave", "주다"],
+    "sing": ["sang", "노래하다"],
+    "swim": ["swam", "수영하다"],
+    "fly": ["flew", "날다"],
+    "sleep": ["slept", "자다"],
+    "feel": ["felt", "느끼다"],
+    "meet": ["met", "만나다"],
+    "leave": ["left", "떠나다, 남기다"],
+    "bring": ["brought", "가져오다"],
+    "teach": ["taught", "가르치다"],
+    "catch": ["caught", "잡다"],
+    "hear": ["heard", "듣다"],
+    "stand": ["stood", "서다"],
+    "sit": ["sat", "앉다"],
+    "pay": ["paid", "지불하다"],
+    "draw": ["drew", "그리다"],
+    "grow": ["grew", "자라다"],
+    "wear": ["wore", "입다"],
+    "win": ["won", "이기다"],
+    "lose": ["lost", "잃다, 지다"],
+    "keep": ["kept", "유지하다"],
+    "begin": ["began", "시작하다"],
+    "fall": ["fell", "떨어지다"],
+    "break": ["broke", "부수다"],
+    "cut": ["cut", "자르다"],
+    "put": ["put", "놓다"],
+    "hurt": ["hurt", "다치게 하다"],
+    "hit": ["hit", "치다"]
   };
 
   // 규칙 변화 자동 처리 알고리즘
   function getRegularPast(verb) {
     if (verb.endsWith('e')) {
-      return { past: verb + 'd', pp: verb + 'd' };
+      return verb + 'd';
     } 
     else if (verb.length > 2 && verb.endsWith('y') && !'aeiou'.includes(verb[verb.length - 2])) {
-      const stem = verb.slice(0, -1);
-      return { past: stem + 'ied', pp: stem + 'ied' };
+      return verb.slice(0, -1) + 'ied';
     } 
+    // 예외 단어 처리 (visit 등 2음절 강세 예외)
+    else if (verb === 'visit' || verb === 'open' || verb === 'enter') {
+      return verb + 'ed';
+    }
+    // 단모음 + 단자음 이중자음화 (예: stop -> stopped, plan -> planned)
     else if (
       verb.length >= 3 &&
       !'aeiou'.includes(verb[verb.length - 1]) &&
@@ -302,11 +302,10 @@
       !'aeiou'.includes(verb[verb.length - 3]) &&
       !['w', 'x', 'y'].includes(verb[verb.length - 1])
     ) {
-      const doubled = verb + verb[verb.length - 1] + 'ed';
-      return { past: doubled, pp: doubled };
+      return verb + verb[verb.length - 1] + 'ed';
     } 
     else {
-      return { past: verb + 'ed', pp: verb + 'ed' };
+      return verb + 'ed';
     }
   }
 
@@ -319,15 +318,13 @@
       return;
     }
 
-    let past, pp, meaning, isIrregular = false;
+    let past, meaning, isIrregular = false;
 
     if (dict[input]) {
-      [past, pp, meaning] = dict[input];
+      [past, meaning] = dict[input];
       isIrregular = true;
     } else {
-      const regResult = getRegularPast(input);
-      past = regResult.past;
-      pp = regResult.pp;
+      past = getRegularPast(input);
       meaning = "규칙 동사 변환 적용됨";
     }
 
@@ -340,15 +337,9 @@
       <div class="word-present">${input}</div>
       <div class="word-meaning">${meaning}</div>
       <div class="divider"></div>
-      <div class="past-grid">
-        <div class="past-item">
-          <div class="label">과거형 (Past)</div>
-          <div class="value">${past}</div>
-        </div>
-        <div class="past-item">
-          <div class="label">과거완료 (P.P)</div>
-          <div class="value">${pp}</div>
-        </div>
+      <div class="past-box">
+        <div class="label">과거형 (Past Tense)</div>
+        <div class="value">${past}</div>
       </div>
     `;
   }
