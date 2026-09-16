@@ -199,7 +199,7 @@
   </header>
 
   <div class="search-box">
-    <input type="text" id="searchInput" placeholder="영단어 입력 (예: go, study, run)" oninput="searchWord()" autofocus>
+    <input type="text" id="searchInput" placeholder="영단어 입력 (예: tell, go, study)" oninput="searchWord()" autofocus>
   </div>
 
   <div class="result-card" id="resultCard">
@@ -209,6 +209,7 @@
   <div class="quick-list">
     <h2>🔥 자주 찾는 불규칙 동사</h2>
     <div class="tags">
+      <button class="tag" onclick="quickSearch('tell')">tell</button>
       <button class="tag" onclick="quickSearch('go')">go</button>
       <button class="tag" onclick="quickSearch('see')">see</button>
       <button class="tag" onclick="quickSearch('eat')">eat</button>
@@ -217,7 +218,6 @@
       <button class="tag" onclick="quickSearch('have')">have</button>
       <button class="tag" onclick="quickSearch('make')">make</button>
       <button class="tag" onclick="quickSearch('buy')">buy</button>
-      <button class="tag" onclick="quickSearch('come')">come</button>
       <button class="tag" onclick="quickSearch('think')">think</button>
     </div>
   </div>
@@ -226,10 +226,17 @@
 <script>
   // 불규칙 동사 사전 데이터베이스 (현재형 : [과거형, 과거완료형, 한글 뜻])
   const dict = {
+    // 필수 추가 및 수정 항목
+    "tell": ["told", "told", "말하다, 이야기하다"],
+    "sell": ["sold", "sold", "팔다"],
+    
+    // be 동사
     "be": ["was / were", "been", "~이다, 있다"],
     "is": ["was", "been", "~이다, 있다"],
     "am": ["was", "been", "~이다, 있다"],
     "are": ["were", "been", "~이다, 있다"],
+    
+    // 주요 불규칙 동사 대량 보강
     "go": ["went", "gone", "가다"],
     "come": ["came", "come", "오다"],
     "run": ["ran", "run", "달리다"],
@@ -262,7 +269,21 @@
     "catch": ["caught", "caught", "잡다"],
     "hear": ["heard", "heard", "듣다"],
     "stand": ["stood", "stood", "서다"],
-    "sit": ["sat", "sat", "앉다"]
+    "sit": ["sat", "sat", "앉다"],
+    "pay": ["paid", "paid", "지불하다"],
+    "draw": ["drew", "drawn", "그리다"],
+    "grow": ["grew", "grown", "자라다"],
+    "wear": ["wore", "worn", "입다"],
+    "win": ["won", "won", "이기다"],
+    "lose": ["lost", "lost", "잃다, 지다"],
+    "keep": ["kept", "kept", "유지하다"],
+    "begin": ["began", "begun", "시작하다"],
+    "fall": ["fell", "fallen", "떨어지다"],
+    "break": ["broke", "broken", "부수다"],
+    "cut": ["cut", "cut", "자르다"],
+    "put": ["put", "put", "놓다"],
+    "hurt": ["hurt", "hurt", "다치게 하다"],
+    "hit": ["hit", "hit", "치다"]
   };
 
   // 규칙 변화 자동 처리 알고리즘
